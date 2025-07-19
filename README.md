@@ -1,6 +1,6 @@
 # WhatsInsight
 
-![WhatsInsight Banner](images/banner.png)
+<img src="images/banner.png" alt="Banner" style="border: 2px solid #00FFFF; border-radius: 8px; width: 100%; max-width: 600px; margin: 10px 0;" />
 
 **WhatsInsight** is an intelligent, advanced, visual analytics tool that extracts meaningful insights from WhatsApp chats. Designed with interactivity and aesthetics in mind, it enables users to explore conversational trends, behavioral patterns, and hidden dynamics in group or personal chats.
 
@@ -41,11 +41,14 @@ This project is built using:
 
 ## Sample Visualizations
 
-![Chat Timeline](images/timeline.png)
+<h3>Chat Timeline</h3>
+<img src="images/timeline.png" alt="Chat Timeline" style="border: 2px solid #00FFFF; border-radius: 8px; width: 100%; max-width: 600px; margin: 10px 0;" />
 
-![User Analysis](images/useranalysis.png)
+<h3>User Analysis</h3>
+<img src="images/useranalysis.png" alt="User Analysis" style="border: 2px solid #00FFFF; border-radius: 8px; width: 100%; max-width: 600px; margin: 10px 0;" />
 
-![Word Cloud](images/wordcloud.png)
+<h3>Word Cloud</h3>
+<img src="images/wordcloud.png" alt="Word Cloud" style="border: 2px solid #00FFFF; border-radius: 8px; width: 100%; max-width: 600px; margin: 10px 0;" />
 
 ---
 
