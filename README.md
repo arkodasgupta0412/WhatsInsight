@@ -66,5 +66,6 @@ This project is built using:
 
 ---
 
-**Made by Arko Dasgupta**  
 Turn your WhatsApp chats into powerful insights with WhatsInsight.
+
+**Made by Arko Dasgupta**
