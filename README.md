@@ -14,7 +14,7 @@ WhatsInsight helps you answer:
 - What are the most active hours?
 - How fast do people respond?
 - What are the dominant words used?
-  and more...
+  <br>and more...
 
 All of these are visualized through bar graphs, donut graphs, pie charts, word clouds, and even chat timelines.
 
