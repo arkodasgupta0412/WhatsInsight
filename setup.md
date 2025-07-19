@@ -32,6 +32,7 @@ In VS Code, you can click the `Select Interpreter` option shown at the bottom ba
 Then run the app using:
 
 ```bash
+cd src
 streamlit run app.py
 ```
 
