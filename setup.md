@@ -67,4 +67,4 @@ Explore insightful visualizations like:
 - Most active user
 - Hourly and weekday activity trends
 - Word clouds for frequent terms
-- And more!
+  and more...
