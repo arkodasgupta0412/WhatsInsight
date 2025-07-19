@@ -12,11 +12,9 @@ WhatsInsight helps you answer:
 
 - Who talks the most in the group?
 - What are the most active hours?
-- How does activity vary by weekday?
-- Are you a day chatter or night owl?
 - How fast do people respond?
-- Who sends the most media or links?
 - What are the dominant words used?
+  and more...
 
 All of these are visualized through bar graphs, donut graphs, pie charts, word clouds, and even chat timelines.
 
@@ -90,3 +88,5 @@ To use WhatsInsight, you’ll need to export a chat from WhatsApp. Here’s how:
 Turn your WhatsApp chats into powerful insights with WhatsInsight.
 
 **Made by Arko Dasgupta**
+
+_To run this on your own machine, please refer to [setup.md](setup.md)_
