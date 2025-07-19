@@ -43,7 +43,7 @@ This project is built using:
 
 ![Chat Timeline](images/timeline.png)
 
-![Top Active Users](images/topactive.png)
+![User Analysis](images/useranalysis.png)
 
 ![Word Cloud](images/wordcloud.png)
 
