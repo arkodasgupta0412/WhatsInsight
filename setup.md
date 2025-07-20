@@ -26,7 +26,7 @@ conda env update --file environment.yml --name whatsinsight
 
 ## 4. Run the App
 
-First, set the Python interpreter in the created conda environment as default one. (if not set)
+Firstly, set the Python interpreter in the above created conda environment as the default one (if not set).
 In VS Code, you can click the `Select Interpreter` option shown at the bottom bar.
 
 Then run the app using:
