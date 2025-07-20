@@ -26,7 +26,7 @@ conda env update --file environment.yml --name whatsinsight
 
 ## 4. Run the App
 
-First, set the Python interpreter in the created conda environment as default one. (if not set)
+Firstly, set the Python interpreter in the above created conda environment as the default one (if not set).
 In VS Code, you can click the `Select Interpreter` option shown at the bottom bar.
 
 Then run the app using:
@@ -38,7 +38,7 @@ streamlit run app.py
 
 If you're getting "Fatal error in launcher" when using `streamlit run`, ensure that `streamlit` is correctly added to your system PATH and matches the active environment.
 
-Alternatively, you can run the app using the commmand:
+Alternatively, you can run the app using the command:
 
 ```bash
 python -m streamlit run app.py
