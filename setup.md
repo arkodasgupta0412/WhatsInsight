@@ -38,7 +38,7 @@ streamlit run app.py
 
 If you're getting "Fatal error in launcher" when using `streamlit run`, ensure that `streamlit` is correctly added to your system PATH and matches the active environment.
 
-Alternatively, you can run the app using the commmand:
+Alternatively, you can run the app using the command:
 
 ```bash
 python -m streamlit run app.py
