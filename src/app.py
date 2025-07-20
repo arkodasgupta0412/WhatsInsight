@@ -328,6 +328,7 @@ def run():
             setGap()
             temporal_activity(df, selected_user)
             setGap()
+            setGap()
             concluding_analysis(df, selected_user);
             setGap()
             wordCloud(df, selected_user)
