@@ -2,6 +2,9 @@
 
 **WhatsInsight** is an intelligent, advanced, visual analytics tool that extracts meaningful insights from WhatsApp chats. Designed with interactivity and aesthetics in mind, it enables users to explore conversational trends, behavioral patterns, and hidden dynamics in group or personal chats.
 
+The website is deployed on Render. You can access it using https://whatsinsight.onrender.com.
+Please be patient as the site may take some time in uploading and showing entire analysis
+
 <img src="images/banner.png" alt="Banner" style="border: 10px solid #00FFFF; border-radius: 8px; width: 100%; max-width: 600px; margin: 10px 0;" />
 
 ---
