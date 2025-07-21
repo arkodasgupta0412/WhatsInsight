@@ -3,6 +3,7 @@ import re
 import emoji
 from datetime import timedelta
 
+
 def format_hour(hr):
     if hr == 0: return "12 A.M"
     elif hr < 12: return f"{hr} A.M"
