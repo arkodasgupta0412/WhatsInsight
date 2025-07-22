@@ -1,4 +1,3 @@
-import time
 import re
 import emoji
 from datetime import timedelta

@@ -6,7 +6,6 @@ from collections import Counter
 import streamlit as st
 from draw import STREAMLIT_BG
 
-# Common stop words to filter out
 STOP_WORDS = {
     'the', 'a', 'an', 'and', 'or', 'but', 'in', 'on', 'at', 'to', 'for', 'of', 'with', 'by',
     'i', 'you', 'he', 'she', 'it', 'we', 'they', 'me', 'him', 'her', 'us', 'them',

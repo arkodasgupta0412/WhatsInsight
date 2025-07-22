@@ -8,7 +8,7 @@ from wordCloud import plot_wordCloud
 
 def setTitle():
     st.sidebar.markdown(
-        "<h1 style='font-size: 32px; margin-top: 0; margin-bottom: 50px;'>WhatsInsight</h1>",
+        "<h1 style='font-size: 32px; font-family: monospace; margin-top: 0; margin-bottom: 50px;'>WhatsInsight</h1>",
         unsafe_allow_html=True)
 
 
@@ -21,7 +21,7 @@ def setGap(level="subheading"):
 
 
 def setPageConfig():
-    st.set_page_config(layout="wide")
+    st.set_page_config(page_title="WhatsInsight", layout="wide")
 
 
 def user_selection_sidebar(df):
@@ -62,15 +62,15 @@ def basic_statistics(df, selected_user):
         months = int(remaining_days // 30.44)
         days = int(remaining_days % 30.44)
 
-        st.markdown(f"""<div style='font-size:18px; font-weight:500; padding:6px 0; margin-bottom:16px;'>
+        st.markdown(f"""<div style='font-size:18px; font-family: monospace; font-weight:500; padding:6px 0; margin-bottom:16px;'>
                 <b>Group Created On: </b>&nbsp;&nbsp;&nbsp; <span style='color:#1f77b4;'>{formatted_date}</span>
                 </div>""", unsafe_allow_html=True)
 
-        st.markdown(f"""<div style='font-size:18px; font-weight:500; padding:6px 0; margin-bottom:16px;'>
+        st.markdown(f"""<div style='font-size:18px; font-family: monospace; font-weight:500; padding:6px 0; margin-bottom:16px;'>
                 <b>Group Age: </b>&nbsp;&nbsp;&nbsp; <span style='color:#1f77b4;'>{years} yrs {months} months, {days} days</span>
                 </div>""", unsafe_allow_html=True)
         
-        st.markdown(f"""<div style='font-size:18px; font-weight:500; padding:6px 0; margin-bottom:16px;'>
+        st.markdown(f"""<div style='font-size:18px; font-family: monospace; font-weight:500; padding:6px 0; margin-bottom:16px;'>
                 <b>Number of Participants: </b>&nbsp;&nbsp;&nbsp; <span style='color:#1f77b4;'>{participants}</span>
                 </div>""", unsafe_allow_html=True)
         setGap()
