@@ -74,8 +74,8 @@ To use WhatsInsight, you’ll need to export a chat from WhatsApp. Here’s how:
 2. Tap the **3-dot menu (⋮)** or the **chat name** at the top.
 3. Select **More** > **Export Chat**.
 4. Choose whether to:
-   - **Without Media** – _recommended for lighter analysis_
-   - **With Media** – includes attachments (slower, larger)
+   - **Without Media**
+   - **With Media**
 5. Share the exported `.txt` file to your email, Google Drive, or other means to access it from your computer.
 
 > **Important:** Do **not modify** the `.txt` file before uploading it to WhatsInsight.
