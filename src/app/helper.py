@@ -1,6 +1,7 @@
 import re
 import emoji
 from datetime import timedelta
+import pandas as pd
 
 
 def format_hour(hr):
@@ -102,15 +103,25 @@ def files_shared(user, df):
 
 
 def media_shared(user, df):
-    keyword = "<Media omitted>"
+    media_extensions_regex = r'\.(jpg|jpeg|png|gif|webp|mp4|3gp|mkv|mov|mp3|opus|m4a|aac)\b'
+    
+    excluded_extensions_regex = r'\.(pdf|docx?|xlsx?|pptx?|vcf|txt|zip|rar)\b'
 
-    if (user != "Overall"):
-        user_df = df[df['user'] == user]
+    media_placeholders = [
+        r"<Media omitted>",
+        r"image omitted",
+        r"video omitted",
+        r"audio omitted",
+    ]
+    placeholder_regex = '|'.join(media_placeholders)
 
-    else:
-        user_df = df.copy()
+    user_df = df[df['user'] == user].copy() if user != "Overall" else df.copy()
 
-    media_count = user_df['message'].apply(lambda msg: keyword in str(msg)).sum()
+    has_media_ext = user_df['message'].str.contains(media_extensions_regex, case=False, na=False, regex=True)
+    not_doc_ext   = ~user_df['message'].str.contains(excluded_extensions_regex, case=False, na=False, regex=True)
+    has_placeholder = user_df['message'].str.contains(placeholder_regex, case=False, na=False, regex=True)
+
+    media_count = ((has_media_ext & not_doc_ext) | has_placeholder).sum()
 
     return media_count
 
@@ -269,8 +280,6 @@ def longest_inactive_streak(selected_user, df):
 
 
 
-import pandas as pd
-
 def response_times(df):
     """
     Calculates response time (in minutes) between consecutive user messages. Ignores 'group_notification's. """
@@ -298,5 +307,45 @@ def response_times(df):
         "median": round(response_times.median(), 2),
         "all_deltas": response_times
     }
+
+
+def is_media_included(df):
+    media_extensions_regex = r'\.(jpg|jpeg|png|gif|webp|mp4|3gp|mkv|mov|mp3|opus|m4a|aac)\b'
+
+    media_placeholders = [
+        r"<Media omitted>",
+        r"image omitted",
+        r"video omitted",
+        r"audio omitted",
+    ]
+    placeholder_regex = '|'.join(media_placeholders)
+
+    has_media_extensions = df['message'].str.contains(media_extensions_regex, case=False, na=False, regex=True)
+    has_placeholders = df['message'].str.contains(placeholder_regex, case=False, na=False, regex=True)
+
+    return has_media_extensions.any() and not has_placeholders.any()
+
+
+
+
+
+def count_media_docs_contacts(df, selected_user):
+    if selected_user != "Overall":
+        df = df[df['user'] == selected_user]
+
+    # Count media types
+    image_count = df['message'].str.contains(r'\.(jpg|jpeg|png|gif|webp)', case=False, na=False).sum()
+    video_count = df['message'].str.contains(r'\.(mp4|3gp|mkv|mov)', case=False, na=False).sum()
+    audio_count = df['message'].str.contains(r'\.(opus|mp3|m4a|aac)', case=False, na=False).sum()
+
+    # Count documents
+    doc_extensions = r'\.(pdf|docx?|xlsx?|pptx?|txt|zip|rar|csv)'
+    doc_count = df['message'].str.contains(doc_extensions, case=False, na=False).sum()
+
+    # Count contacts
+    contact_keywords = r'(contact card|shared a contact|vcf)'
+    contact_count = df['message'].str.contains(contact_keywords, case=False, na=False).sum()
+
+    return image_count, video_count, audio_count, doc_count, contact_count
 
 

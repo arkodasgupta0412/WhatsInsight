@@ -5,29 +5,22 @@ import seaborn as sns
 import pandas as pd
 from datetime import datetime
 import helper
+import utils
 
 # Streamlit dark theme background
 STREAMLIT_BG = '#0E1117'
 
 
-def get_user_colors(user_counts):
-    users = list(user_counts.keys())
-    palette = sns.color_palette("hls", len(users))
-    user_color_map = {user: palette[i] for i, user in enumerate(users)}
-
-    return user_color_map
-
-
-
 def plot_chat_timeline(df):
-    """
-    Plots the daily message count timeline.
-    """
+    current_date = datetime.now().date()
 
     df = df[df['user'] != 'group_notification'].copy()
     df['date'] = pd.to_datetime(df['date'], errors='coerce')
+    df = df[df['date'].dt.date <= current_date]
 
     daily_counts = df.groupby('date').size()
+
+    # daily_counts = {'07-10-2023': 100, '08-10-2020':50 ,,,.. "current-date":300}
 
     fig, ax = plt.subplots(figsize=(12, 5))
     fig.patch.set_facecolor('none')
@@ -61,13 +54,20 @@ def plot_chat_timeline(df):
 
 def distribution_chart(df, metric):
     valid_metrics = ['messages', 'media', 'links']
+
     if metric not in valid_metrics:
         raise ValueError(f"Invalid metric '{metric}'. Choose from {valid_metrics}")
 
     if metric == 'messages':
         user_counts = df['user'].value_counts().to_dict()
+
     elif metric == 'media':
-        user_counts = df[df['message'] == '<Media omitted>']['user'].value_counts().to_dict()
+        user_counts = {}
+        for user in df['user'].unique():
+            if pd.isna(user):
+                continue
+            user_counts[user] = helper.media_shared(user, df)
+
     elif metric == 'links':
         user_counts = df[df['message'].str.contains(r'https?://', na=False)]['user'].value_counts().to_dict()
 
@@ -94,15 +94,20 @@ def distribution_chart(df, metric):
 
     total = sum(sizes)
 
-    user_color_map = get_user_colors(user_counts)
+    user_color_map = utils.get_user_colors(user_counts)
     colors = [user_color_map.get(user, '#999999') for user in labels]
 
+    # Calculate exact decimal percentages that sum to 100
     raw_percentages = [count / total * 100 for count in sizes]
-    rounded_percentages = np.floor(raw_percentages).astype(int)
-    diff = 100 - sum(rounded_percentages)
-    remainders = np.array(raw_percentages) - rounded_percentages
-    for i in np.argsort(remainders)[-diff:]:
-        rounded_percentages[i] += 1
+    rounded_percentages = [round(p, 1) for p in raw_percentages]
+    
+    # Ensure they sum to exactly 100.0
+    current_sum = sum(rounded_percentages)
+    if current_sum != 100.0:
+        diff = 100.0 - current_sum
+        # Add the difference to the largest value
+        max_idx = rounded_percentages.index(max(rounded_percentages))
+        rounded_percentages[max_idx] = round(rounded_percentages[max_idx] + diff, 1)
 
     streamlit_bg = STREAMLIT_BG
     fig, ax = plt.subplots(figsize=(5.5, 5.5), dpi=100)
@@ -123,7 +128,7 @@ def distribution_chart(df, metric):
     ax.axis('equal')
 
     ax.text(0, 0, "100", ha='center', va='center',
-            fontsize=18, color='white', fontweight='bold')
+            fontsize=18, color='white')
 
     radius = 0.8
     for i, wedge in enumerate(wedges):
@@ -133,7 +138,7 @@ def distribution_chart(df, metric):
         y = radius * np.sin(angle_rad)
         ax.text(x, y, f"{rounded_percentages[i]}",
                 ha='center', va='center',
-                fontsize=12, color='black', fontweight='bold')
+                fontsize=12, color='black')
 
     legend_labels = [f"{label}" for label in labels]
     num_cols = 2 if len(legend_labels) <= 6 else 3 if len(legend_labels) <= 12 else 4
@@ -166,7 +171,7 @@ def top_active_users_plot(df):
     user_counts = df['user'].value_counts()
     top_users = user_counts.head(min(5, len(user_counts)))
 
-    user_color_map = get_user_colors(user_counts)
+    user_color_map = utils.get_user_colors(user_counts)
 
     colors = [user_color_map[user] for user in top_users.index]
 
@@ -211,6 +216,85 @@ def top_active_users_plot(df):
     return fig
 
 
+
+def plot_media_categorization(df, selected_user):
+    df = df.copy()
+    df = df[df['user'].str.lower() != 'group_notification']
+
+    if selected_user != "Overall":
+        user_df = df[df['user'] == selected_user]
+    else:
+        user_df = df
+
+    # Count media types
+    media_counts = {
+        "Image": user_df['message'].str.contains(r'\.(jpg|jpeg|png|gif|webp)', case=False, na=False).sum(),
+        "Video": user_df['message'].str.contains(r'\.(mp4|3gp|mkv|mov)', case=False, na=False).sum(),
+        "Audio": user_df['message'].str.contains(r'\.(opus|mp3|m4a|aac)', case=False, na=False).sum()
+    }
+
+    total = sum(media_counts.values())
+
+    if total == 0:
+        if selected_user == "Overall":
+            print("No media files were shared in this group.")
+        else:
+            print("You haven't shared any media files yet.")
+
+        return None
+
+ 
+    media_labels = ["Image", "Video", "Audio"]
+    media_values = [media_counts[label] for label in media_labels]
+
+
+    color_map = {
+        "Image": "#4FC3F7",
+        "Video": "#81C784",
+        "Audio": "#FFB74D" 
+    }
+    colors = [color_map[label] for label in media_labels]
+
+
+    fig, ax = plt.subplots(figsize=(9, 9.4))
+
+    fig.patch.set_facecolor('none')
+    fig.patch.set_edgecolor('none')
+
+    ax.set_facecolor(STREAMLIT_BG)
+    ax.spines['top'].set_color(STREAMLIT_BG)
+    ax.spines['right'].set_color(STREAMLIT_BG)
+    ax.spines['bottom'].set_color('white')
+    ax.spines['left'].set_color('white')
+
+    bars = ax.bar(media_labels, media_values, color=colors)
+
+    ax.tick_params(axis='x', colors='white', labelsize=15)
+    ax.tick_params(axis='y', colors='white', labelsize=15)
+
+    ax.set_xlabel("Media Type", color='white', fontsize=18, labelpad=30)
+    ax.set_ylabel("Count", color='white', fontsize=18, labelpad=30)
+
+    for bar in bars:
+        height = bar.get_height()
+        text_color = 'white' if height == 0 else 'black'
+        ax.text(
+            bar.get_x() + bar.get_width() / 2,
+            height * 0.5 if height > 0 else 0.1,
+            f"{int(height)}",
+            ha='center',
+            va='center',
+            color=text_color,
+            fontsize=15,
+            fontweight='bold'
+        )
+
+    fig.patch.set_edgecolor('none')
+
+    return fig
+
+
+
 def yearly_message_count_plot(df):
     year_counts = df['year'].value_counts().sort_index()
 
@@ -238,13 +322,14 @@ def yearly_message_count_plot(df):
     # Labels
     ax.set_xlabel("Year", color='white', fontsize=18, labelpad=30)
     ax.set_ylabel("Text Messages", color='white', fontsize=18, labelpad=30)
-    ax.set_title("Yearly Text Messages Count", color='white', fontsize=18, pad=20)
+    # ax.set_title("Yearly Text Messages Count", color='white', fontsize=18, pad=20)
 
     # Add value labels on markers
     for x, y in zip(year_counts.index, year_counts.values):
         ax.text(x, y, str(y), color='white', fontsize=15, ha='center', va='bottom', fontweight='bold')
 
     return fig
+
 
 
 def monthly_message_count_plot(df):
@@ -285,7 +370,7 @@ def monthly_message_count_plot(df):
     # Labels
     ax.set_xlabel("Month", color='white', fontsize=18, labelpad=30)
     ax.set_ylabel("Text Messages", color='white', fontsize=18, labelpad=30)
-    ax.set_title("Monthly Text Messages Count", color='white', fontsize=18, pad=20)
+    # ax.set_title("Monthly Text Messages Count", color='white', fontsize=18, pad=20)
 
     # Add value labels
     for x, y in zip(short_months, month_counts.values):
@@ -327,7 +412,7 @@ def weekday_message_count_plot(df):
 
     ax.set_xlabel("Weekday", color='white', fontsize=18, labelpad=30)
     ax.set_ylabel("Text Messages", color='white', fontsize=18, labelpad=30)
-    ax.set_title("Weekday Text Messages Count", color='white', fontsize=18, pad=20)
+    # ax.set_title("Weekday Text Messages Count", color='white', fontsize=18, pad=20)
 
     for x, y in zip(weekday_counts.index, weekday_counts.values):
         if not pd.isna(y):
@@ -342,16 +427,8 @@ def avg_monthly_message_count_plot(df):
     df['month_short'] = df['month'].apply(lambda x: datetime.strptime(x, "%B").strftime("%b"))
 
     # Group by year and short month name, count, then take mean over years
-    monthly_avg = (
-        df.groupby(['year', 'month_short'])
-        .size()
-        .groupby(level=1)
-        .mean()
-        .reindex([
-            "Jan", "Feb", "Mar", "Apr", "May", "Jun",
-            "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
-        ])
-    )
+    monthly_avg = (df.groupby(['year', 'month_short']).size().groupby(level=1).mean()
+        .reindex(["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]))
 
     fig, ax = plt.subplots(figsize=(9, 9.4))
 
@@ -377,7 +454,7 @@ def avg_monthly_message_count_plot(df):
     # Labels
     ax.set_xlabel("Month", color='white', fontsize=18, labelpad=30)
     ax.set_ylabel("Avg Text Messages", color='white', fontsize=18, labelpad=30)
-    ax.set_title("Average Monthly Text Messages", color='white', fontsize=18, pad=20)
+    # ax.set_title("Average Monthly Text Messages", color='white', fontsize=18, pad=20)
 
     # Add value labels on markers
     for x, y in zip(monthly_avg.index, monthly_avg.values):
@@ -385,6 +462,7 @@ def avg_monthly_message_count_plot(df):
             ax.text(x, y, f"{y:.0f}", color='white', fontsize=14, ha='center', va='bottom', fontweight='bold')
 
     return fig
+
 
 
 def avg_weekday_message_count_plot(df):
@@ -422,12 +500,13 @@ def avg_weekday_message_count_plot(df):
 
     ax.set_xlabel("Weekday", color='white', fontsize=18, labelpad=30)
     ax.set_ylabel("Avg Text Messages", color='white', fontsize=18, labelpad=30)
-    ax.set_title("Average Weekday Text Messages", color='white', fontsize=18, pad=20)
+    # ax.set_title("Average Weekday Text Messages", color='white', fontsize=18, pad=20)
 
     for x, y in zip(avg_counts.index, avg_counts.values):
         ax.text(x, y, f"{y:.1f}", color='white', fontsize=14, ha='center', va='bottom', fontweight='bold')
 
     return fig
+
 
 
 def hourly_message_count_plot(df, selected_user="Overall"): 
@@ -692,7 +771,7 @@ def plot_day_night_activity_pie(df, selected_user="Overall"):
 
     labels = ['Day', 'Night']
     sizes = [counts['Day'], counts['Night']]
-    colors = ["#ecf235", "#272AED"] 
+    colors = ["#fffd6f", "#272AED"] 
 
     fig, ax = plt.subplots()
     fig.patch.set_facecolor('none')
@@ -709,7 +788,7 @@ def plot_day_night_activity_pie(df, selected_user="Overall"):
 
     for i, label in enumerate(labels):
         if label == 'Day':
-            texts[i].set_color('black')
+            texts[i].set_color('white')
             autotexts[i].set_color('black')
         else:
             texts[i].set_color('white')

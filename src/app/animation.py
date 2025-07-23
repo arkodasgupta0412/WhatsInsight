@@ -1,7 +1,7 @@
 import time
 import matplotlib.pyplot as plt
 import matplotlib.animation as animation
-from app import draw
+import draw
 import io
 import streamlit as st
 
