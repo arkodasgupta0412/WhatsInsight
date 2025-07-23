@@ -7,7 +7,7 @@ Please be patient as the site may take some time in uploading and showing entire
 
 NOTE:
 
-- Media Categorization and counts will only be shown if chat export with media has been uploaded
+- Media Categorization and counts will only be shown if chat export with media has been uploaded.
 
 <br>
 <img src="images/banner.png" alt="Banner" style="border: 10px solid #00FFFF; border-radius: 8px; width: 100%; max-width: 600px; margin: 10px 0;" />
