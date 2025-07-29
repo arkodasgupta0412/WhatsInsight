@@ -31,22 +31,24 @@ def update_ios_system_messages(df):
 
     system_message_mask = df['message'].str.contains(system_regex, na=False)
     
-    df.loc[system_message_mask, 'user'] = "group_notification"
-    
+    df.loc[system_message_mask, 'user'] = "group_notification"    
     return df
 
+
+# def translate_message(msg):
+#    return GoogleTranslator(source='auto', target='en').translate(msg)
 
 
 def preprocess(data):
     # Combining both iOS and Android regex patterns
     pattern = r"""
-        (?:                             # non-capturing group for full match
-            \[?                         # optional opening bracket (iOS)
-            (?P<date>\d{1,2}/\d{1,2}/\d{2,4}),\s* # date
-            (?P<time>\d{1,2}:\d{2}(?::\d{2})?\s*[APMapm\.]*)  # time with optional seconds + AM/PM
-            \]?                         # optional closing bracket (iOS)
-            (?:\s*[\-\]]\s*)            # separator (- or ])
-            (?P<chat>.+)                # user and message
+        (?:                                                     # non-capturing group for full match
+            \[?                                                 # optional opening bracket (iOS)
+            (?P<date>\d{1,2}/\d{1,2}/\d{2,4}),\s*               # date
+            (?P<time>\d{1,2}:\d{2}(?::\d{2})?\s*[APMapm\.]*)    # time with optional seconds + AM/PM
+            \]?                                                 # optional closing bracket (iOS)
+            (?:\s*[\-\]]\s*)                                    # separator (- or ])
+            (?P<chat>.+)                                        # user and message
         )
     """
 
@@ -119,6 +121,10 @@ def preprocess(data):
     df['minute'] = pd.to_datetime(df['time'].astype(str), format='%H:%M:%S').dt.minute.astype(str).str.zfill(2)
 
     df = update_ios_system_messages(df)
+
+    # Final preprocessing component, uses googleTrans to translate messages to English for sentiment analysis
+    # df['translated_msg'] = df['message'].apply(translate_message) 
+    # print(df.head(10))
 
     return df
 
