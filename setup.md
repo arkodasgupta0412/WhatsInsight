@@ -33,7 +33,7 @@ Then run the app using:
 
 ```bash
 cd src
-streamlit run app.py
+streamlit run app/app.py
 ```
 
 If you're getting "Fatal error in launcher" when using `streamlit run`, ensure that `streamlit` is correctly added to your system PATH and matches the active environment.
