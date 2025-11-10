@@ -41,7 +41,7 @@ If you're getting "Fatal error in launcher" when using `streamlit run`, ensure t
 Alternatively, you can run the app using the command:
 
 ```bash
-python -m streamlit run app.py
+python -m streamlit run app/app.py
 ```
 
 ## 5. Prepare Your WhatsApp Chat File
